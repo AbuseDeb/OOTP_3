@@ -18,9 +18,6 @@ namespace OOTP_2
     [KnownType(typeof(FootballPlayer))]
     public class Person //: IExtensibleDataObject
     {
-
-        
-
         [DataMember(Name = "Name")]
         public string m_cName { get; set; }
         [DataMember(Name = "LastName")]
@@ -31,6 +28,14 @@ namespace OOTP_2
             m_cName = Name;
             m_cLastName = LastName;
         }
+
+        public virtual string GetInfo()
+        {
+            return String.Format("{0} {1}", m_cName, m_cLastName);
+        }
+
+
+
 
         //private ExtensionDataObject extensionDataObject_value;
         //public ExtensionDataObject ExtensionData
@@ -56,6 +61,11 @@ namespace OOTP_2
         {
             m_cNameOfOrganization = Organization;
         }
+
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cNameOfOrganization);
+        }
     }
 
     [DataContract(Name = "Waiter")]
@@ -67,6 +77,11 @@ namespace OOTP_2
         public Waiter(string Name, string LastName, string Organization, string Salary) : base(Name, LastName, Organization)
         {
             m_cSalary = Salary;
+        }
+
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cSalary);
         }
     }
 
@@ -81,6 +96,10 @@ namespace OOTP_2
         {
             m_cSalary = Salary;
         }
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cSalary);
+        }
     }
 
     [DataContract(Name = "SportsMan")]
@@ -91,6 +110,11 @@ namespace OOTP_2
         public SportsMan(string Name, string LastName, string Team) : base(Name, LastName)
         {
             m_cTeam = Team;
+        }
+
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cTeam);
         }
     }
 
@@ -103,6 +127,11 @@ namespace OOTP_2
         {
             m_cPosition = Position;
         }
+
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cPosition);
+        }
     }
 
     [DataContract(Name = "FootballPlayer")]
@@ -113,6 +142,11 @@ namespace OOTP_2
         public FootballPlayer(string Name, string LastName, string Team, string Position) : base(Name, LastName, Team)
         {
             m_cPosition = Position;
+        }
+
+        public override string GetInfo()
+        {
+            return base.GetInfo() + String.Format(" {0}", m_cPosition);
         }
     }
 
@@ -171,20 +205,25 @@ namespace OOTP_2
             writer.Close();
         }
 
-        public static void ReadObject(string fileName)
+        public static string ReadObject(string fileName)
         {
             Console.WriteLine("Deserializing an instance of the object.");
             FileStream fs = new FileStream(fileName,
             FileMode.Open);
-            XmlDictionaryReader reader =
-                XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-            DataContractSerializer ser = new DataContractSerializer(typeof(Person));
+            XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
+            DataContractSerializer ser = new DataContractSerializer(typeof(List<Person>));
 
             // Deserialize the data and read it from the instance.
-            Person deserializedPerson =
-                (Person)ser.ReadObject(reader, true);
+            List<Person> deserializedPerson =
+                (List<Person>)ser.ReadObject(reader, true);
             reader.Close();
             fs.Close();
+            string cRec = "";
+            foreach(Person p in deserializedPerson)
+            {
+                cRec += p.GetInfo() + "\n";
+            }
+            return cRec;
             //Console.WriteLine(String.Format("{0} {1}",
             //deserializedPerson.FirstName, deserializedPerson.LastName));
         }

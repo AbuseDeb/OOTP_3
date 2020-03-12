@@ -29,6 +29,8 @@ namespace OOTP_2
             InitializeComponent();
 
             Test.WriteObject("test");
+            string text = Test.ReadObject("test");
+            TextBloc.Text = text;
         }          
     }   
 
